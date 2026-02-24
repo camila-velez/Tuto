@@ -1,14 +1,28 @@
 <script setup lang="ts">
+import BookReviews from '@/components/BookReviews.vue';
 import { BookService } from '@/services/BookService.js';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const bookId = Number(route.params.id);
 const book = BookService.getBookById(bookId);
+
+// functions
+function formatToCOP(price: number): string {
+  const formatter = new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+
+  return formatter.format(price).replace(/^\s*\$\s?/, '');
+}
+
 </script>
 
 <template>
-  <section v-if="book">
+<section v-if="book">
     <div class="max-w-7xl mx-auto">
       <div class="grid grid-cols-1 gap-12">
         <div class="lg:col-span-2">
@@ -52,7 +66,7 @@ const book = BookService.getBookById(bookId);
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-600">Price:</span>
-                  <span class="font-medium">${{ book.price }}</span>
+                  <span class="font-medium">${{ formatToCOP(book.price) }} COP</span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-600">Stock:</span>
@@ -63,8 +77,12 @@ const book = BookService.getBookById(bookId);
               </div>
             </div>
           </div>
+          <div class="bg-white rounded-lg shadow-md p-6 mt-8">
+            <BookReviews :book-id="book.id" />
+          </div>
         </div>
       </div>
     </div>
   </section>
 </template>
+
