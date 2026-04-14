@@ -2,10 +2,9 @@
 import BookReviews from '@/components/BookReviews.vue';
 import { BookService } from '@/services/BookService.js';
 import { useRoute } from 'vue-router';
+import type { BookInterface } from '@/interfaces/BookInterface.js';
+import { onMounted, ref } from 'vue';
 
-const route = useRoute();
-const bookId = Number(route.params.id);
-const book = BookService.getBookById(bookId);
 
 // functions
 function formatToCOP(price: number): string {
@@ -18,11 +17,15 @@ function formatToCOP(price: number): string {
 
   return formatter.format(price).replace(/^\s*\$\s?/, '');
 }
-
+onMounted(async () => {
+  const route = useRoute();
+  const bookId = Number(route.params.id);
+  book.value = await BookService.getBookById(bookId);
+});
 </script>
 
 <template>
-<section v-if="book">
+  <section v-if="book">
     <div class="max-w-7xl mx-auto">
       <div class="grid grid-cols-1 gap-12">
         <div class="lg:col-span-2">
@@ -85,4 +88,3 @@ function formatToCOP(price: number): string {
     </div>
   </section>
 </template>
-
